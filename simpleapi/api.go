@@ -3,13 +3,14 @@ package simpleapi
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 )
 
 // Login performs a POST request to the login API.
 func Login(url string, payload LoginRequest) (*GenericResponse, error) {
 	// Marshal the request body to JSON
+
 	jsonData, err := json.Marshal(payload)
 	if err != nil {
 		return nil, err
@@ -23,7 +24,7 @@ func Login(url string, payload LoginRequest) (*GenericResponse, error) {
 	defer resp.Body.Close()
 
 	// Read the response body
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -37,5 +38,3 @@ func Login(url string, payload LoginRequest) (*GenericResponse, error) {
 
 	return &response, nil
 }
-
-// Other API functions like GET, PUT can be added similarly.
