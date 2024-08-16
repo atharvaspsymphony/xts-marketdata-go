@@ -1,5 +1,10 @@
 package simpleapi
 
+type GenericHeader struct {
+	contentType   string
+	Authorization string
+}
+
 // LoginRequest represents the structure of the login request payload
 type LoginRequest struct {
 	SecretKey string `json:"secretKey"`
@@ -15,10 +20,25 @@ type LoginResult struct {
 	ApplicationExpiryDate string `json:"application_expiry_date"`
 }
 
+type LoginResponse struct {
+	GenericResponse
+	Result LoginResult `json:"result"`
+}
+
+type SearchRequest struct {
+	Source      string       `json:"source"`
+	Instruments []Instrument `json:"instruments"`
+}
+
+type Instrument struct {
+	ExchangeSegment      int `json:"exchangeSegment"`
+	ExchangeInstrumentID int `json:"exchangeInstrumentID"`
+}
+
 // GenericResponse represents a generic structure of the response payload
 type GenericResponse struct {
 	Type        string      `json:"type"`
 	Code        string      `json:"code"`
 	Description string      `json:"description"`
-	Result      LoginResult `json:"result"`
+	Result      interface{} `json:"result"`
 }
