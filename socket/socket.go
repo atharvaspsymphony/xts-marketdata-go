@@ -60,7 +60,7 @@ func login() (*LoginResponse, error) {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", "http://"+URL+"/apimarketdata/auth/login", bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest("POST", URL+"/apimarketdata/auth/login", bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +92,7 @@ func subscribeInstruments(token string) (*SubscriptionResponse, error) {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", "http://"+URL+"/apimarketdata/instruments/subscription", bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest("POST", URL+"/apimarketdata/instruments/subscription", bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, err
 	}
