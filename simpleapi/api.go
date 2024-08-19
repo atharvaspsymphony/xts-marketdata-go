@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
 )
 
 // GenericHeader stores common headers.
@@ -198,7 +199,7 @@ func GetSeries(exchangeSegment string) (*GenericResponse, error) {
 	return &response, nil
 }
 
-// GetSeries API
+// GetEquitySymbol API
 func GetEquitySymbol(exchangeSegmentParams string) (*GenericResponse, error) {
 
 	var queryParams map[string]string
@@ -297,7 +298,7 @@ func GetFutureSymbol(GetFutureSymbolParams string) (*GenericResponse, error) {
 	return &response, nil
 }
 
-// GetFutureSymbol API
+// GetOptionSymbol API
 func GetOptionSymbol(GetOptionSymbolParams string) (*GenericResponse, error) {
 
 	var queryParams map[string]string
@@ -328,4 +329,196 @@ func GetOptionSymbol(GetOptionSymbolParams string) (*GenericResponse, error) {
 	}
 
 	return &response, nil
+}
+
+// GetStrikes API
+func GetStrikePrices(GetStrikesParams string) (*GenericResponse, error) {
+
+	var queryParams map[string]string
+	if err := json.Unmarshal([]byte(GetStrikesParams), &queryParams); err != nil {
+		return nil, err
+	}
+
+	urlParams := url.Values{}
+	for key, value := range queryParams {
+		urlParams.Add(key, value)
+	}
+
+	GetStrikeURL := fmt.Sprintf("%s?%s", baseURL+marketDataRoutes["get.strikes"].(string), urlParams.Encode())
+	req, err := http.NewRequest("GET", GetStrikeURL, nil)
+	if err != nil {
+		return nil, err
+	}
+	setHeaders(req)
+
+	body, err := doRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var response GenericResponse
+	if err := parseJSONResponse(body, &response); err != nil {
+		return nil, err
+	}
+
+	return &response, nil
+}
+
+// GetOptionType API
+func GetOptionType(GetOptionTypeParams string) (*GenericResponse, error) {
+
+	var queryParams map[string]string
+	if err := json.Unmarshal([]byte(GetOptionTypeParams), &queryParams); err != nil {
+		return nil, err
+	}
+
+	urlParams := url.Values{}
+	for key, value := range queryParams {
+		urlParams.Add(key, value)
+	}
+
+	GetOptionTypeURL := fmt.Sprintf("%s?%s", baseURL+marketDataRoutes["get.optionType"].(string), urlParams.Encode())
+	req, err := http.NewRequest("GET", GetOptionTypeURL, nil)
+	if err != nil {
+		return nil, err
+	}
+	setHeaders(req)
+
+	body, err := doRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var response GenericResponse
+	if err := parseJSONResponse(body, &response); err != nil {
+		return nil, err
+	}
+
+	return &response, nil
+}
+
+// GetIndexList API
+func GetIndexList(exchangeSegment string) (*GenericResponse, error) {
+	GetIndexListURL := fmt.Sprintf("%s?exchangeSegment=%s", baseURL+marketDataRoutes["get.indexlist"].(string), exchangeSegment)
+	req, err := http.NewRequest("GET", GetIndexListURL, nil)
+	if err != nil {
+		return nil, err
+	}
+	setHeaders(req)
+
+	body, err := doRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var response GenericResponse
+	if err := parseJSONResponse(body, &response); err != nil {
+		return nil, err
+	}
+	return &response, nil
+}
+
+// Quotes API
+func Quotes(quotePayload QuoteRequest) (*GenericResponse, error) {
+	jsonData, err := json.Marshal(quotePayload)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", baseURL+marketDataRoutes["quote"].(string), bytes.NewBuffer(jsonData))
+	if err != nil {
+		return nil, err
+	}
+	setHeaders(req)
+
+	body, err := doRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var result GenericResponse
+	if err := parseJSONResponse(body, &result); err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
+// Subscribe API
+func Subscribe(subscribePayload SubscribeRequest) (*SubscribeResponse, error) {
+	jsonData, err := json.Marshal(subscribePayload)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", baseURL+marketDataRoutes["subscribe"].(string), bytes.NewBuffer(jsonData))
+	if err != nil {
+		return nil, err
+	}
+	setHeaders(req)
+
+	body, err := doRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var result SubscribeResponse
+	if err := parseJSONResponse(body, &result); err != nil {
+		return nil, err
+	}
+
+	//Storing the subscribe response in memory data.
+	for _, quote := range result.Result.QuotesList {
+		exSegment := strconv.Itoa(quote.ExchangeSegment)
+		exid := strconv.Itoa(quote.ExchangeInstrumentID)
+		LoadInMemory(result.Code, exSegment, exid, result.Result.ListQuotes)
+	}
+
+	return &result, nil
+}
+
+// UnSubscribe API
+func UnSubscribe(UnsubscribePayload SubscribeRequest) (*UnsubscribeResponse, error) {
+	jsonData, err := json.Marshal(UnsubscribePayload)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PUT", baseURL+marketDataRoutes["subscribe"].(string), bytes.NewBuffer(jsonData))
+	if err != nil {
+		return nil, err
+	}
+	setHeaders(req)
+
+	body, err := doRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var result UnsubscribeResponse
+	if err := parseJSONResponse(body, &result); err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
+// Logout API
+func Logout() (*GenericResponse, error) {
+	req, err := http.NewRequest("DELETE", baseURL+marketDataRoutes["auth.logout"].(string), nil)
+	if err != nil {
+		return nil, err
+	}
+	setHeaders(req)
+	body, err := doRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var result GenericResponse
+	if err := parseJSONResponse(body, &result); err != nil {
+		return nil, err
+	}
+
+	return &result, nil
 }

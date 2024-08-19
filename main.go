@@ -28,7 +28,7 @@ func main() {
 	UserID = response.Result.UserID
 	fmt.Println("Login Response-->", response.Result)
 
-	//ClientConfig
+	// ClientConfig
 	clientResponse, err := simpleapi.ClientConfig()
 	if err != nil {
 		fmt.Println("Error:", err)
@@ -66,17 +66,17 @@ func main() {
 	}
 	fmt.Println("Search Response-->", SearchbyIDResponse)
 
-	//SearchbyString
-	// const searchString string = "TCS"
-	// SearchbyStringResponse, err := simpleapi.SearchByString(searchString)
-	// if err != nil {
-	// 	fmt.Println("Error:", err)
-	// 	return
-	// }
-	// fmt.Println("Search Response-->", SearchbyStringResponse)
+	// SearchbyString
+	const searchString string = "TCS"
+	SearchbyStringResponse, err := simpleapi.SearchByString(searchString)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	fmt.Println("Search Response-->", SearchbyStringResponse)
 
-	//GetSeries
-	const exchangeSegment string = "1"
+	// GetSeries
+	var exchangeSegment = "1"
 	GetSeriesResponse, err := simpleapi.GetSeries(exchangeSegment)
 	if err != nil {
 		fmt.Println("Error:", err)
@@ -140,4 +140,96 @@ func main() {
 		return
 	}
 	fmt.Println("GetOptionSymbolResponse-->", GetOptionSymbolResponse)
+
+	//GetStrikePrices
+	var GetStrikesParams = `{
+		"exchangeSegment":"2",
+		"series":"OPTIDX",
+		"symbol":"NIFTY",
+		"expiryDate": "29Aug2024",
+		"optionType":"CE",
+		"strikePrice":"25000"
+	}`
+	GetStrikesResponse, err := simpleapi.GetStrikePrices(GetStrikesParams)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	fmt.Println("GetStrikesResponse-->", GetStrikesResponse)
+
+	//GetOptionType
+	var GetOptionTypeParams = `{
+		"exchangeSegment":"2",
+		"series":"OPTIDX",
+		"symbol":"NIFTY",
+		"expiryDate": "29Aug2024",
+		"optionType":"CE",
+		"strikePrice":"25000"
+	}`
+	GetOptionTypeResponse, err := simpleapi.GetOptionType(GetOptionTypeParams)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	fmt.Println("GetOptionTypeResponse-->", GetOptionTypeResponse)
+
+	//GetIndexList
+	exchangeSegment = "11"
+	GetIndexListResponse, err := simpleapi.GetIndexList(exchangeSegment)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	fmt.Println("GetIndexListResponse-->", GetIndexListResponse)
+
+	//Quote
+	var quotePayload = simpleapi.QuoteRequest{
+		Instruments: []simpleapi.Instrument{
+			{ExchangeSegment: 1, ExchangeInstrumentID: 26000},
+		},
+		XtsMessageCode: 1501,
+		PublishFormat:  "JSON",
+	}
+	QuoteResponse, err := simpleapi.Quotes(quotePayload)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	fmt.Println("QuoteResponse-->", QuoteResponse)
+
+	//Subscribe
+	var subscribePayload = simpleapi.SubscribeRequest{
+		Instruments: []simpleapi.Instrument{
+			{ExchangeSegment: 1, ExchangeInstrumentID: 26000},
+		},
+		XtsMessageCode: 1501,
+	}
+	SubscribeResponse, err := simpleapi.Subscribe(subscribePayload)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	fmt.Println("SubscribeResponse-->", SubscribeResponse.Result)
+
+	//Unsubscribe
+	var unsubscribePayload = simpleapi.SubscribeRequest{
+		Instruments: []simpleapi.Instrument{
+			{ExchangeSegment: 1, ExchangeInstrumentID: 26000},
+		},
+		XtsMessageCode: 1501,
+	}
+	UnsubscribeResponse, err := simpleapi.UnSubscribe(unsubscribePayload)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	fmt.Println("UnsubscribeResponse-->", UnsubscribeResponse.Result)
+
+	//Logout
+	LogoutResponse, err := simpleapi.Logout()
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	fmt.Println("LogoutResponse-->", LogoutResponse)
 }

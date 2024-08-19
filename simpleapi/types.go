@@ -30,6 +30,17 @@ type SearchRequest struct {
 	Instruments []Instrument `json:"instruments"`
 }
 
+type QuoteRequest struct {
+	Instruments    []Instrument `json:"instruments"`
+	XtsMessageCode int          `json:"xtsMessageCode"`
+	PublishFormat  string       `json:"publishFormat"`
+}
+
+type SubscribeRequest struct {
+	Instruments    []Instrument `json:"instruments"`
+	XtsMessageCode int          `json:"xtsMessageCode"`
+}
+
 type Instrument struct {
 	ExchangeSegment      int `json:"exchangeSegment"`
 	ExchangeInstrumentID int `json:"exchangeInstrumentID"`
@@ -41,4 +52,25 @@ type GenericResponse struct {
 	Code        string      `json:"code"`
 	Description string      `json:"description"`
 	Result      interface{} `json:"result"`
+}
+
+type SubscribeResponse struct {
+	GenericResponse
+	Result struct {
+		Mdp                        int      `json:"mdp"`
+		QuotesList                 []Quote  `json:"quotesList"`
+		ListQuotes                 []string `json:"listQuotes"`
+		RemainingSubscriptionCount int      `json:"remaining_subscription_count"`
+	} `json:"result"`
+}
+
+type UnsubscribeResponse struct {
+	GenericResponse
+	XtsMessageCode int
+	Unsublist      []Instrument
+}
+
+type Quote struct {
+	ExchangeSegment      int `json:"exchangeSegment"`
+	ExchangeInstrumentID int `json:"exchangeInstrumentID"`
 }
