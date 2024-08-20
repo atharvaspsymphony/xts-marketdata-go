@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -28,7 +29,6 @@ const (
 
 var instruments = []map[string]interface{}{
 	{"exchangeSegment": 1, "exchangeInstrumentID": 26000}, // nsecm
-	{"exchangeSegment": 1, "exchangeInstrumentID": 2885},  // nsecm
 }
 
 type LoginResponse struct {
@@ -132,8 +132,8 @@ func NewMDSocketClient(url, token, userID, broadcastMode string) *MDSocketClient
 }
 
 func (c *MDSocketClient) connect() {
-	connectionURL := "ws://" + c.url + "/apimarketdata/socket.io/?token=" + c.token + "&userID=" + c.userID + "&publishFormat=JSON&broadcastMode=" + c.broadcastMode
-
+	connectionURL := "wss://" + "developers.symphonyfintech.in" + "/apimarketdata/socket.io/?token=" + c.token + "&userID=" + c.userID + "&publishFormat=JSON&broadcastMode=" + c.broadcastMode + "&transport=websocket&EIO=3"
+	fmt.Println("connectionURL-->", connectionURL)
 	var err error
 	c.connection, _, err = websocket.DefaultDialer.Dial(connectionURL, nil)
 	if err != nil {
@@ -147,14 +147,6 @@ func (c *MDSocketClient) connect() {
 func (c *MDSocketClient) listen() {
 	defer c.connection.Close()
 
-	for {
-		_, message, err := c.connection.ReadMessage()
-		if err != nil {
-			logrus.Errorf("read error: %v", err)
-			return
-		}
-		logrus.Infof("Received message: %s", message)
-	}
 }
 
 func main() {
