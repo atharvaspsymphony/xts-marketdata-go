@@ -2,20 +2,119 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
+	"os/signal"
 	simpleapi "test/simpleapi" // Import the simpleapi package
+	"time"
+
+	"github.com/gorilla/websocket"
 )
 
-const url string = "https://developers.symphonyfintech.in"
-const secretKey string = "Pxrw554$zH"
-const appKey string = "caf0e727f0887e7a597911"
+var (
+	UserID = ""
+	Token  = ""
+)
 
-var UserID = ""
+const (
+	appKey         = "caf0e727f0887e7a597911"
+	secretKey      = "Pxrw554$zH"
+	Source         = "WEBAPI"
+	url            = "https://developers.symphonyfintech.in"
+	XTSMessageCode = 1512
+	BroadcastMode  = "Full"
+)
 
 // Define the login request payload
 var loginPayload = simpleapi.LoginRequest{
 	SecretKey: secretKey,
 	AppKey:    appKey,
 	Source:    "WebAPI",
+}
+
+func socket() {
+
+	//Login to get the token
+	response, err := simpleapi.Login(url, loginPayload)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	UserID = response.Result.UserID
+	Token = response.Result.Token
+	fmt.Println("Login Response-->", response.Result)
+
+	//Subscribe to the instruments which you want to get datafeed on socket
+	var subscribePayload = simpleapi.SubscribeRequest{
+		Instruments: []simpleapi.Instrument{
+			{ExchangeSegment: 1, ExchangeInstrumentID: 26000},
+		},
+		XtsMessageCode: 1501,
+	}
+	SubscribeResponse, err := simpleapi.Subscribe(subscribePayload)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	fmt.Println("SubscribeResponse-->", SubscribeResponse.Result)
+
+	//Socket
+	connectionURL := fmt.Sprintf("wss://%s/apimarketdata/socket.io/?token=%s&userID=%s&publishFormat=JSON&broadcastMode=%s&transport=websocket&EIO=3",
+		"developers.symphonyfintech.in", Token, UserID, BroadcastMode)
+
+	fmt.Println("Connection URL -->", connectionURL)
+
+	u, _, err := websocket.DefaultDialer.Dial(connectionURL, nil)
+	if err != nil {
+		log.Fatal("Error connecting to WebSocket:", err)
+		return
+	}
+	defer u.Close()
+
+	interrupt := make(chan os.Signal, 1)
+	signal.Notify(interrupt, os.Interrupt)
+
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		for {
+			_, message, err := u.ReadMessage()
+			if err != nil {
+				log.Println("Error reading message:", err)
+				return
+			}
+			fmt.Printf("Received message: %s\n", message)
+
+		}
+	}()
+
+	ticker := time.NewTicker(time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-done:
+			return
+		case t := <-ticker.C:
+			err := u.WriteMessage(websocket.TextMessage, []byte(t.String()))
+			if err != nil {
+				log.Println("Error writing message:", err)
+				return
+			}
+		case <-interrupt:
+			log.Println("Interrupt received. Closing connection...")
+			err := u.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+			if err != nil {
+				log.Println("Error writing close message:", err)
+				return
+			}
+			select {
+			case <-done:
+			case <-time.After(time.Second):
+			}
+			return
+		}
+	}
 }
 
 func main() {
