@@ -5,6 +5,14 @@ type GenericHeader struct {
 	Authorization string
 }
 
+// GenericResponse represents a generic structure of the response payload
+type GenericResponse struct {
+	Type        string      `json:"type"`
+	Code        string      `json:"code"`
+	Description string      `json:"description"`
+	Result      interface{} `json:"result"`
+}
+
 // LoginRequest represents the structure of the login request payload
 type LoginRequest struct {
 	SecretKey string `json:"secretKey"`
@@ -44,14 +52,6 @@ type SubscribeRequest struct {
 type Instrument struct {
 	ExchangeSegment      int `json:"exchangeSegment"`
 	ExchangeInstrumentID int `json:"exchangeInstrumentID"`
-}
-
-// GenericResponse represents a generic structure of the response payload
-type GenericResponse struct {
-	Type        string      `json:"type"`
-	Code        string      `json:"code"`
-	Description string      `json:"description"`
-	Result      interface{} `json:"result"`
 }
 
 type SubscribeResponse struct {
