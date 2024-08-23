@@ -13,7 +13,7 @@ There is also an examples folder available which illustrates how to create a con
 ## Installation
 Clone the Github repo in your working dir
 ```bash
-https://github.com/atharvaspsymphony/golangTest/tree/master/api
+https://github.com/atharvaspsymphony/xts-marketdata-go/tree/master/api
 ```
 
 ## Usage
