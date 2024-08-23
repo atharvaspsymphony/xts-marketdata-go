@@ -10,4 +10,19 @@ With the use of the socket.io library, the API has streaming capability and will
 
 There is also an examples folder available which illustrates how to create a connection to XTS marketdata component in order to subscribe to real-time events. Please request for apikeys with Symphony Fintech developer support team to start integrating your application with XTS OEMS.
 
+## Installation
+Clone the Github repo in your working dir
+```bash
+https://github.com/atharvaspsymphony/golangTest/tree/master/api
+```
+
 ## Usage
+Access the /api dir directly.
+
+```go
+import (
+	"fmt"
+	marketdata "test/api"
+)
+
+```
