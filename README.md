@@ -29,7 +29,7 @@ Initailize all the required constants & variables.
 
 ## Detailed explanation of API
 
-## Login
+### Login
 call the login API to generate the token
 POST /auth/login
 ```go
@@ -42,13 +42,13 @@ response, err := marketdata.Login(url, loginPayload)
 ```
 Once the token is generated you can call any api provided in the documentation.
 
-## ClientConfig
+### ClientConfig
 GET /config/clientConfig
 ```go
 clientResponse, err := marketdata.ClientConfig()
 ```
 
-## Quote
+### Quote
 POST /instruments/quotes
 ```go
 var quotePayload = marketdata.QuoteRequest{
@@ -61,7 +61,7 @@ var quotePayload = marketdata.QuoteRequest{
 QuoteResponse, err := marketdata.Quotes(quotePayload)
 ```
 
-## Subscription
+### Subscription
 POST /instruments/subscription
 ```go
 var subscribePayload = marketdata.SubscribeRequest{
@@ -73,7 +73,7 @@ var subscribePayload = marketdata.SubscribeRequest{
 SubscribeResponse, err := marketdata.Subscribe(subscribePayload)
 ```
 
-## Unsubscription
+### Unsubscription
 POST /instruments/subscription
 ```go
 var unsubscribePayload = marketdata.SubscribeRequest{
@@ -85,14 +85,14 @@ var unsubscribePayload = marketdata.SubscribeRequest{
 UnsubscribeResponse, err := marketdata.UnSubscribe(unsubscribePayload)
 ```
 
-## GetSeries
+### GetSeries
 GET /instruments/instrument/series
 ```go
 var exchangeSegment = "1"
 GetSeriesResponse, err := marketdata.GetSeries(exchangeSegment)
 ```
 
-## GetEquitySymbol
+### GetEquitySymbol
 GET /instruments/instrument/symbol
 ```go
 var equitySymbolParams = `{
@@ -103,7 +103,7 @@ var equitySymbolParams = `{
 GetEquitySymboleResponse, err := marketdata.GetEquitySymbol(equitySymbolParams)
 ```
 
-## GetExpiryDate
+### GetExpiryDate
 GET /instruments/instrument/expiryDate
 ```go
 var GetExpiryParams = `{
@@ -115,7 +115,7 @@ var GetExpiryParams = `{
 GetExpiryResponse, err := marketdata.GetExpiry(GetExpiryParams)
 ```
 
-## GetFutureSymbol
+### GetFutureSymbol
 GET /instruments/instrument/futureSymbol
 ```go
 var GetFutureSymbolParams = `{
@@ -127,7 +127,7 @@ var GetFutureSymbolParams = `{
 GetFutureSymbolResponse, err := marketdata.GetFutureSymbol(GetFutureSymbolParams)
 ```
 
-## GetOptionSymbol
+### GetOptionSymbol
 GET /instruments/instrument/optionSymbol
 ```go
 var GetOptionSymbolParams = `{
@@ -141,7 +141,7 @@ var GetOptionSymbolParams = `{
 GetOptionSymbolResponse, err := marketdata.GetOptionSymbol(GetOptionSymbolParams)
 ```
 
-## GetStrikePrice
+### GetStrikePrice
 GET /instruments/instrument/strikePrice
 ```go
 var GetStrikesParams = `{
@@ -155,7 +155,7 @@ var GetStrikesParams = `{
 GetStrikesResponse, err := marketdata.GetStrikePrices(GetStrikesParams)
 ```
 
-## GetOptionType
+### GetOptionType
 GET /instruments/instrument/optionType
 ```go
 var GetOptionTypeParams = `{
@@ -169,9 +169,45 @@ var GetOptionTypeParams = `{
 GetOptionTypeResponse, err := marketdata.GetOptionType(GetOptionTypeParams)
 ```
 
-## IndexList
+### IndexList
 GET /instruments/indexlist
 ```go
 exchangeSegment = "11"
 GetIndexListResponse, err := marketdata.GetIndexList(exchangeSegment)
 ```
+
+### Search Instruments by ID
+POST /search/instrumentsbyid
+```go
+var searchPayload = marketdata.SearchRequest{
+    Source: "WebAPI",
+    Instruments: []marketdata.Instrument{
+        {ExchangeSegment: 1, ExchangeInstrumentID: 26000},
+    },
+}
+SearchbyIDResponse, err := marketdata.SearchByID(searchPayload)
+```
+
+### Search Instruments by String
+GET /search/instruments
+```go
+const searchString string = "TCS"
+SearchbyStringResponse, err := marketdata.SearchByString(searchString)
+```
+
+### OHLC
+GET /instruments/ohlc
+```go
+var params = `{
+    "exchangeSegment": "11",
+    "exchangeInstrumentID": "532540",
+    "startTime": "Aug 08 2024 090000",
+    "endTime": "Aug 08 2024 153000",
+    "compressionValue": "60"
+}`
+
+ohlcResponse, err := marketdata.GetOHLC(params)
+```
+
+## Instantiating the XtsMarketDataWS
+This component provides functionality to access the socket related events. All real-time events can be registered via XtsMarketDataWS . After token is generated, you can access the socket component and instantiate the socket. Note that you will need to subscribe to instrument using Subscribe api [here](#place-2)
