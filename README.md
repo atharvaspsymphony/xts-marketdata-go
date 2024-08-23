@@ -72,3 +72,106 @@ var subscribePayload = marketdata.SubscribeRequest{
 }
 SubscribeResponse, err := marketdata.Subscribe(subscribePayload)
 ```
+
+## Unsubscription
+POST /instruments/subscription
+```go
+var unsubscribePayload = marketdata.SubscribeRequest{
+    Instruments: []marketdata.Instrument{
+        {ExchangeSegment: 1, ExchangeInstrumentID: 26000},
+    },
+    XtsMessageCode: 1501,
+}
+UnsubscribeResponse, err := marketdata.UnSubscribe(unsubscribePayload)
+```
+
+## GetSeries
+GET /instruments/instrument/series
+```go
+var exchangeSegment = "1"
+GetSeriesResponse, err := marketdata.GetSeries(exchangeSegment)
+```
+
+## GetEquitySymbol
+GET /instruments/instrument/symbol
+```go
+var equitySymbolParams = `{
+    "exchangeSegment":"1",
+    "series":"EQ",
+    "symbol":"Reliance"}`
+
+GetEquitySymboleResponse, err := marketdata.GetEquitySymbol(equitySymbolParams)
+```
+
+## GetExpiryDate
+GET /instruments/instrument/expiryDate
+```go
+var GetExpiryParams = `{
+    "exchangeSegment":"2",
+    "series":"FUTIDX",
+    "symbol":"NIFTY"
+    }`
+
+GetExpiryResponse, err := marketdata.GetExpiry(GetExpiryParams)
+```
+
+## GetFutureSymbol
+GET /instruments/instrument/futureSymbol
+```go
+var GetFutureSymbolParams = `{
+    "exchangeSegment":"2",
+    "series":"FUTIDX",
+    "symbol":"NIFTY",
+    "expiryDate": "29Aug2024"
+}`
+GetFutureSymbolResponse, err := marketdata.GetFutureSymbol(GetFutureSymbolParams)
+```
+
+## GetOptionSymbol
+GET /instruments/instrument/optionSymbol
+```go
+var GetOptionSymbolParams = `{
+    "exchangeSegment":"2",
+    "series":"OPTIDX",
+    "symbol":"NIFTY",
+    "expiryDate": "29Aug2024",
+    "optionType":"CE",
+    "strikePrice":"25000"
+}`
+GetOptionSymbolResponse, err := marketdata.GetOptionSymbol(GetOptionSymbolParams)
+```
+
+## GetStrikePrice
+GET /instruments/instrument/strikePrice
+```go
+var GetStrikesParams = `{
+    "exchangeSegment":"2",
+    "series":"OPTIDX",
+    "symbol":"NIFTY",
+    "expiryDate": "29Aug2024",
+    "optionType":"CE",
+    "strikePrice":"25000"
+}`
+GetStrikesResponse, err := marketdata.GetStrikePrices(GetStrikesParams)
+```
+
+## GetOptionType
+GET /instruments/instrument/optionType
+```go
+var GetOptionTypeParams = `{
+    "exchangeSegment":"2",
+    "series":"OPTIDX",
+    "symbol":"NIFTY",
+    "expiryDate": "29Aug2024",
+    "optionType":"CE",
+    "strikePrice":"25000"
+}`
+GetOptionTypeResponse, err := marketdata.GetOptionType(GetOptionTypeParams)
+```
+
+## IndexList
+GET /instruments/indexlist
+```go
+exchangeSegment = "11"
+GetIndexListResponse, err := marketdata.GetIndexList(exchangeSegment)
+```
