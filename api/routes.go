@@ -1,4 +1,4 @@
-package simpleapi
+package marketdata
 
 var marketDataRoutes = map[string]interface{}{
 	"auth.login":       "/apimarketdata/auth/login",

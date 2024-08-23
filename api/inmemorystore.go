@@ -1,4 +1,4 @@
-package simpleapi
+package marketdata
 
 import (
 	"sync"

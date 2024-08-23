@@ -1,4 +1,4 @@
-package simpleapi
+package marketdata
 
 type GenericHeader struct {
 	contentType   string

@@ -2,8 +2,7 @@ package main
 
 import (
 	"fmt"
-	simpleapi "test/simpleapi" // Import the simpleapi package
-	socket "test/socket"
+	marketdata "test/api"
 )
 
 var (
@@ -21,7 +20,7 @@ const (
 )
 
 // Define the login request payload
-var loginPayload = simpleapi.LoginRequest{
+var loginPayload = marketdata.LoginRequest{
 	SecretKey: secretKey,
 	AppKey:    appKey,
 	Source:    "WebAPI",
@@ -30,7 +29,7 @@ var loginPayload = simpleapi.LoginRequest{
 func socketTest() {
 
 	//Login to get the token
-	response, err := simpleapi.Login(url, loginPayload)
+	response, err := marketdata.Login(url, loginPayload)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -40,13 +39,13 @@ func socketTest() {
 	fmt.Println("Login Response-->", response.Result)
 
 	//Subscribe to the instruments which you want to get datafeed on socket
-	var subscribePayload = simpleapi.SubscribeRequest{
-		Instruments: []simpleapi.Instrument{
+	var subscribePayload = marketdata.SubscribeRequest{
+		Instruments: []marketdata.Instrument{
 			{ExchangeSegment: 1, ExchangeInstrumentID: 26000},
 		},
 		XtsMessageCode: 1501,
 	}
-	SubscribeResponse, err := simpleapi.Subscribe(subscribePayload)
+	SubscribeResponse, err := marketdata.Subscribe(subscribePayload)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -54,13 +53,13 @@ func socketTest() {
 	fmt.Println("SubscribeResponse-->", SubscribeResponse.Result)
 
 	//Socket
-	socket.Socket(Token, UserID, BroadcastMode)
+	marketdata.Socket(Token, UserID, BroadcastMode)
 
 }
 
 func main() {
 	//Login
-	response, err := simpleapi.Login(url, loginPayload)
+	response, err := marketdata.Login(url, loginPayload)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -69,7 +68,7 @@ func main() {
 	fmt.Println("Login Response-->", response.Result)
 
 	// ClientConfig
-	clientResponse, err := simpleapi.ClientConfig()
+	clientResponse, err := marketdata.ClientConfig()
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -85,7 +84,7 @@ func main() {
 		"compressionValue": "60"
 	}`
 
-	ohlcResponse, err := simpleapi.GetOHLC(params)
+	ohlcResponse, err := marketdata.GetOHLC(params)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -93,13 +92,13 @@ func main() {
 	fmt.Println("OHLC Response-->", ohlcResponse.Result)
 
 	//SearchbyID
-	var searchPayload = simpleapi.SearchRequest{
+	var searchPayload = marketdata.SearchRequest{
 		Source: "WebAPI",
-		Instruments: []simpleapi.Instrument{
+		Instruments: []marketdata.Instrument{
 			{ExchangeSegment: 1, ExchangeInstrumentID: 26000},
 		},
 	}
-	SearchbyIDResponse, err := simpleapi.SearchByID(searchPayload)
+	SearchbyIDResponse, err := marketdata.SearchByID(searchPayload)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -108,7 +107,7 @@ func main() {
 
 	// SearchbyString
 	const searchString string = "TCS"
-	SearchbyStringResponse, err := simpleapi.SearchByString(searchString)
+	SearchbyStringResponse, err := marketdata.SearchByString(searchString)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -117,7 +116,7 @@ func main() {
 
 	// GetSeries
 	var exchangeSegment = "1"
-	GetSeriesResponse, err := simpleapi.GetSeries(exchangeSegment)
+	GetSeriesResponse, err := marketdata.GetSeries(exchangeSegment)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -130,7 +129,7 @@ func main() {
 		"series":"EQ",
 		"symbol":"Reliance"}`
 
-	GetEquitySymboleResponse, err := simpleapi.GetEquitySymbol(equitySymbolParams)
+	GetEquitySymboleResponse, err := marketdata.GetEquitySymbol(equitySymbolParams)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -144,7 +143,7 @@ func main() {
 		"symbol":"NIFTY"
 		}`
 
-	GetExpiryResponse, err := simpleapi.GetExpiry(GetExpiryParams)
+	GetExpiryResponse, err := marketdata.GetExpiry(GetExpiryParams)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -158,7 +157,7 @@ func main() {
 		"symbol":"NIFTY",
 		"expiryDate": "29Aug2024"
 	}`
-	GetFutureSymbolResponse, err := simpleapi.GetFutureSymbol(GetFutureSymbolParams)
+	GetFutureSymbolResponse, err := marketdata.GetFutureSymbol(GetFutureSymbolParams)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -174,7 +173,7 @@ func main() {
 		"optionType":"CE",
 		"strikePrice":"25000"
 	}`
-	GetOptionSymbolResponse, err := simpleapi.GetOptionSymbol(GetOptionSymbolParams)
+	GetOptionSymbolResponse, err := marketdata.GetOptionSymbol(GetOptionSymbolParams)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -190,7 +189,7 @@ func main() {
 		"optionType":"CE",
 		"strikePrice":"25000"
 	}`
-	GetStrikesResponse, err := simpleapi.GetStrikePrices(GetStrikesParams)
+	GetStrikesResponse, err := marketdata.GetStrikePrices(GetStrikesParams)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -206,7 +205,7 @@ func main() {
 		"optionType":"CE",
 		"strikePrice":"25000"
 	}`
-	GetOptionTypeResponse, err := simpleapi.GetOptionType(GetOptionTypeParams)
+	GetOptionTypeResponse, err := marketdata.GetOptionType(GetOptionTypeParams)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -215,7 +214,7 @@ func main() {
 
 	//GetIndexList
 	exchangeSegment = "11"
-	GetIndexListResponse, err := simpleapi.GetIndexList(exchangeSegment)
+	GetIndexListResponse, err := marketdata.GetIndexList(exchangeSegment)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -223,14 +222,14 @@ func main() {
 	fmt.Println("GetIndexListResponse-->", GetIndexListResponse)
 
 	//Quote
-	var quotePayload = simpleapi.QuoteRequest{
-		Instruments: []simpleapi.Instrument{
+	var quotePayload = marketdata.QuoteRequest{
+		Instruments: []marketdata.Instrument{
 			{ExchangeSegment: 1, ExchangeInstrumentID: 26000},
 		},
 		XtsMessageCode: 1501,
 		PublishFormat:  "JSON",
 	}
-	QuoteResponse, err := simpleapi.Quotes(quotePayload)
+	QuoteResponse, err := marketdata.Quotes(quotePayload)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -238,13 +237,13 @@ func main() {
 	fmt.Println("QuoteResponse-->", QuoteResponse)
 
 	//Subscribe
-	var subscribePayload = simpleapi.SubscribeRequest{
-		Instruments: []simpleapi.Instrument{
+	var subscribePayload = marketdata.SubscribeRequest{
+		Instruments: []marketdata.Instrument{
 			{ExchangeSegment: 1, ExchangeInstrumentID: 26000},
 		},
 		XtsMessageCode: 1501,
 	}
-	SubscribeResponse, err := simpleapi.Subscribe(subscribePayload)
+	SubscribeResponse, err := marketdata.Subscribe(subscribePayload)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -252,13 +251,13 @@ func main() {
 	fmt.Println("SubscribeResponse-->", SubscribeResponse.Result)
 
 	//Unsubscribe
-	var unsubscribePayload = simpleapi.SubscribeRequest{
-		Instruments: []simpleapi.Instrument{
+	var unsubscribePayload = marketdata.SubscribeRequest{
+		Instruments: []marketdata.Instrument{
 			{ExchangeSegment: 1, ExchangeInstrumentID: 26000},
 		},
 		XtsMessageCode: 1501,
 	}
-	UnsubscribeResponse, err := simpleapi.UnSubscribe(unsubscribePayload)
+	UnsubscribeResponse, err := marketdata.UnSubscribe(unsubscribePayload)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -266,7 +265,7 @@ func main() {
 	fmt.Println("UnsubscribeResponse-->", UnsubscribeResponse.Result)
 
 	//Logout
-	LogoutResponse, err := simpleapi.Logout()
+	LogoutResponse, err := marketdata.Logout()
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
