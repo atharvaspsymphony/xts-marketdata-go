@@ -29,6 +29,46 @@ Initailize all the required constants & variables.
 
 ## Detailed explanation of API
 
-# Heading 1
-## Heading 2
-### Heading 3
+## Login
+call the login API to generate the token
+POST /auth/login
+```go
+var loginPayload = marketdata.LoginRequest{
+	SecretKey: secretKey,
+	AppKey:    appKey,
+	Source:    "WebAPI",
+}
+response, err := marketdata.Login(url, loginPayload)
+```
+Once the token is generated you can call any api provided in the documentation.
+
+## ClientConfig
+GET /config/clientConfig
+```go
+clientResponse, err := marketdata.ClientConfig()
+```
+
+## Quote
+POST /instruments/quotes
+```go
+var quotePayload = marketdata.QuoteRequest{
+    Instruments: []marketdata.Instrument{
+        {ExchangeSegment: 1, ExchangeInstrumentID: 26000},
+    },
+    XtsMessageCode: 1501,
+    PublishFormat:  "JSON",
+}
+QuoteResponse, err := marketdata.Quotes(quotePayload)
+```
+
+## Subscription
+POST /instruments/subscription
+```go
+var subscribePayload = marketdata.SubscribeRequest{
+    Instruments: []marketdata.Instrument{
+        {ExchangeSegment: 1, ExchangeInstrumentID: 26000},
+    },
+    XtsMessageCode: 1501,
+}
+SubscribeResponse, err := marketdata.Subscribe(subscribePayload)
+```
