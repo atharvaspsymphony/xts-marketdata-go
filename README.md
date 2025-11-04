@@ -13,7 +13,7 @@ There is also an examples folder available which illustrates how to create a con
 ## Installation
 Clone the Github repo in your working dir
 ```bash
-https://github.com/atharvaspsymphony/golangTest/tree/master/api
+https://github.com/atharvaspsymphony/xts-marketdata-go/tree/master
 ```
 
 ## Usage
@@ -210,17 +210,82 @@ ohlcResponse, err := marketdata.GetOHLC(params)
 ```
 
 ## Instantiating the XtsMarketDataWS
-This component provides functionality to access the socket related events. All real-time events can be registered via XtsMarketDataWS . After token is generated, you can access the socket component and instantiate the socket. Note that you will need to subscribe to instrument using Subscribe api [here](#subscription).
+This component provides functionality to access the socket related events. All real-time events can be registered. After token is generated, you can access the socket component and instantiate the socket. Note that you will need to subscribe to instrument using Subscribe api [here](#subscription).
 
 Note:- XTS MarketData WebSocket is based on "https://socket.io/" library. This library is available in most of the programming languages. In this package code generic webocket is used to make client connection for socket. This is just an example to make connection for websocket. For more reliable socket connectin you will need to use socket-io library.
 
+Enter your baseURL in the constants section — use /apimarketdata for API Market Data or /apibinarymarketdata for API Binary Market Data.
+
 ```go
-const(
-    BroadcastMode  = "Full"
-    url            = ""
+package main
+
+import (
+	"fmt"
+	marketdata "test/api"
 )
-response, err := marketdata.Login(url, loginPayload)
-UserID = response.Result.UserID
-Token = response.Result.Token
-marketdata.Socket(Token, UserID, BroadcastMode)
+
+const (
+	appKey        = ""
+	secretKey     = ""
+	source        = "WEBAPI"
+	url           = "https://developers.symphonyfintech.in/apibinarymarketdata"
+	broadcastMode = "Full"
+)
+
+var (
+	userID string
+	token  string
+)
+
+func main() {
+	// Step 1: Login to get UserID and Token
+	loginPayload := marketdata.LoginRequest{
+		AppKey:    appKey,
+		SecretKey: secretKey,
+		Source:    source,
+	}
+
+	response, err := marketdata.Login(url, loginPayload)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	userID = response.Result.UserID
+	token = response.Result.Token
+	fmt.Println("Login response:", response.Result)
+
+	// Step 2: Subscribe to instruments
+	subscribePayload := marketdata.SubscribeRequest{
+		Instruments: []marketdata.Instrument{
+			{ExchangeSegment: 2, ExchangeInstrumentID: 37054},
+		},
+		XtsMessageCode: 1501,
+	}
+	subResp, err := marketdata.Subscribe(subscribePayload)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	fmt.Println("Subscription response:", subResp.Result)
+
+	// Step 3: Register event handlers
+	marketdata.On("Touchline", func(data string) {
+		fmt.Println("Touchline Data:", data)
+	})
+	marketdata.On("MarketDepth", func(data string) {
+		fmt.Println("MarketDepth Data:", data)
+	})
+	marketdata.On("OpenInterest", func(data string) {
+		fmt.Println("OpenInterest Data:", data)
+	})
+
+	// Step 4: Connect to WebSocket
+	marketdata.ApibinarymarketdataSocket(url, token, userID, broadcastMode)
+}
+```
+
+### Logout
+DELETE /auth/logout
+```go
+LogoutResponse, err := marketdata.Logout()
 ```
