@@ -13,7 +13,7 @@ There is also an examples folder available which illustrates how to create a con
 ## Installation
 Clone the Github repo in your working dir
 ```bash
-https://github.com/atharvaspsymphony/xts-marketdata-go/tree/master
+https://github.com/atharvaspsymphony/golangTest/tree/master/api
 ```
 
 ## Usage
@@ -213,8 +213,6 @@ ohlcResponse, err := marketdata.GetOHLC(params)
 This component provides functionality to access the socket related events. All real-time events can be registered. After token is generated, you can access the socket component and instantiate the socket. Note that you will need to subscribe to instrument using Subscribe api [here](#subscription).
 
 Note:- XTS MarketData WebSocket is based on "https://socket.io/" library. This library is available in most of the programming languages. In this package code generic webocket is used to make client connection for socket. This is just an example to make connection for websocket. For more reliable socket connectin you will need to use socket-io library.
-
-Enter your baseURL in the constants section — use /apimarketdata for API Market Data or /apibinarymarketdata for API Binary Market Data.
 
 ```go
 package main
