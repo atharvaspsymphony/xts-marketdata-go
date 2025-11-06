@@ -1,8 +1,8 @@
-# xts-marketdata-Go
+# XTS-MarketData-Go
 
 API Documentation for XTS-MarketData API can be found in the below link.
 
-https://symphonyfintech.com/xts-market-data-front-end-api/
+https://developers.symphonyfintech.in/doc/apimarketdata
 
 The XTS market data API provides developer, data-scientist, financial analyst and investor the market data with very low latency. It provides market data from various Indian electronic exchanges.
 
@@ -13,7 +13,7 @@ There is also an examples folder available which illustrates how to create a con
 ## Installation
 Clone the Github repo in your working dir
 ```bash
-https://github.com/atharvaspsymphony/golangTest/tree/master/api
+https://github.com/atharvaspsymphony/xts-marketdata-go.git
 ```
 
 ## Usage
@@ -210,7 +210,7 @@ ohlcResponse, err := marketdata.GetOHLC(params)
 ```
 
 ## Instantiating the XtsMarketDataWS
-This component provides functionality to access the socket related events. All real-time events can be registered. After token is generated, you can access the socket component and instantiate the socket. Note that you will need to subscribe to instrument using Subscribe api [here](#subscription).
+This component provides functionality to access the socket related events. All real-time events can be registered. After token is generated from [login api](#login), you can access the socket component and instantiate the socket. Note that you will need to subscribe to instrument using Subscribe api [here](#subscription).
 
 Note:- XTS MarketData WebSocket is based on "https://socket.io/" library. This library is available in most of the programming languages. In this package code generic webocket is used to make client connection for socket. This is just an example to make connection for websocket. For more reliable socket connectin you will need to use socket-io library.
 

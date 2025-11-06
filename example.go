@@ -123,8 +123,8 @@ func main() {
 	}
 	fmt.Println("SubscribeResponse-->", SubscribeResponse.Result)
 
-	// go apibinarymarketdatasocketTest()
-	// select {}
+	go apibinarymarketdatasocketTest()
+	select {}
 
 	// go apimarketdatasocketTest()
 	// select {}

@@ -14,15 +14,15 @@ import (
 )
 
 // Initialize logger
-var AppLogger *Logger // Global shared logger
+// var AppLogger *Logger // Global shared logger
 
-func init() {
-	var err error
-	AppLogger, err = NewLogger("app2.log")
-	if err != nil {
-		log.Fatal("Failed to initialize logger:", err)
-	}
-}
+// func init() {
+// 	var err error
+// 	AppLogger, err = NewLogger("app2.log")
+// 	if err != nil {
+// 		log.Fatal("Failed to initialize logger:", err)
+// 	}
+// }
 
 
 func getPortAndWSType(rawurl string) (string, string, string, error) {
