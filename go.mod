@@ -1,4 +1,4 @@
-module test
+module github.com/atharvaspsymphony/xts-marketdata-go/v1
 
 go 1.22.5
 
