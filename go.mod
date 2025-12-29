@@ -1,7 +1,6 @@
-module github.com/atharvaspsymphony/xts-marketdata-go/v1
+module test
 
 go 1.22.5
-
 require (
 	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/zhouhui8915/engine.io-go v0.0.0-20150910083302-02ea08f0971f // indirect

@@ -11,7 +11,7 @@ const (
 	secretKey      = ""
 	Source         = "WEBAPI"
 	url            = "https://developers.symphonyfintech.in/apibinarymarketdata"
-	XTSMessageCode = 1501
+	XTSMessageCode = 1510
 	BroadcastMode  = "Full"
 )
 
@@ -112,9 +112,9 @@ func main() {
 	//Subscribe to the instruments which you want to get datafeed on socket
 	var subscribePayload = marketdata.SubscribeRequest{
 		Instruments: []marketdata.Instrument{
-			{ExchangeSegment: 2, ExchangeInstrumentID: 37054},
+			{ExchangeSegment: 2, ExchangeInstrumentID: 49543},
 		},
-		XtsMessageCode: 1501,
+		XtsMessageCode: XTSMessageCode,
 	}
 	SubscribeResponse, err := marketdata.Subscribe(subscribePayload)
 	if err != nil {

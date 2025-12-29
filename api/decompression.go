@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"math"
+	"strings"
 )
 
 // ApplicationMessageVersion enum
@@ -301,6 +302,7 @@ type OpenInterestWS struct {
 	UnderlyingExchangeSegment   int16  `json:"underlyingExchangeSegment"`
 	UnderlyingInstrumentID      uint64 `json:"underlyingInstrumentID"`
 	IsStringExits               int8   `json:"isStringExits"`
+	underlyingIDIndexName	    string `json:"underlyingIDIndexName"`
 	UnderlyingTotalOpenInterest uint64 `json:"underlyingTotalOpenInterest"`
 }
 
@@ -343,10 +345,16 @@ func DeserializeOpenInterest(reader *BinaryReader, count int) map[string]interfa
 	isStringExits := reader.ReadInt8()
 	count += 1
 
+	var underlyingIDIndexName string
+
 	if isStringExits == 1 {
 		stringLength := reader.ReadInt8()
-		count += 1
-		reader.ReadBytes(int(stringLength)) // Skip the string data
+		count++
+
+		data := reader.ReadBytes(int(stringLength)) // read bytes
+		count += int(stringLength)
+
+		underlyingIDIndexName = strings.ToUpper(string(data))
 		count += int(stringLength)
 	}
 
@@ -362,6 +370,7 @@ func DeserializeOpenInterest(reader *BinaryReader, count int) map[string]interfa
 			"underlyingExchangeSegment":   underlyingExchangeSegment,
 			"underlyingInstrumentID":      underlyingInstrumentID,
 			"isStringExits":               isStringExits,
+			"underlyingIDIndexName":       underlyingIDIndexName,
 			"underlyingTotalOpenInterest": underlyingTotalOpenInterest,
 		},
 	}
